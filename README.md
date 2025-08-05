@@ -1,69 +1,65 @@
-# React + TypeScript + Vite
+# HELINT Fleet Management Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React + Vite + TypeScript dashboard for managing helicopter fleets and maintenance logs. Connects to the HELINT backend API for live data, authentication, and CRUD operations.
 
-Currently, two official plugins are available:
+--
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- Multi-page SPA: Dashboard, Aircraft List, Maintenance Logs, Add/Edit Aircraft, Add/Edit Maintenance, Login
+- REST API integration (Node.js/Express/MongoDB backend)
+- User authentication (JWT, admin/technician roles)
+- Comments and audit trail on maintenance logs
+- Advanced search, filtering, sorting, and CSV export
+- Responsive, professional UI with loading spinners
+- Role-based access for protected actions
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
+- Node.js & npm
+- Backend API running (see `/server/README.md`)
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Setup
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start frontend:
+   ```bash
+   npm run dev
+   ```
+3. Access the app at `http://localhost:5173` (default Vite port)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Usage
+- **Login:** Authenticate as admin/technician to access protected features
+- **Dashboard:** View fleet stats, recent activity, and fleet highlights
+- **Aircraft List:** View, add, edit, delete helicopters (admin only)
+- **Maintenance Logs:** View, add, edit, delete logs; add comments; see audit trail
+- **Add/Edit Pages:** Forms for creating or updating aircraft/logs
+- **Export:** Download CSV of aircraft or maintenance logs
+- **Mobile Friendly:** UI adapts for mobile and desktop
+
+---
+
+## Environment Variables
+No frontend .env required for local development. API endpoint is hardcoded as `http://localhost:5000` (update in source if needed).
+
+---
+
+## Project Structure
+```
+src/
+  App.tsx         # Main app layout and routing
+  pages/          # All main page components
+  assets/         # Images and static assets
+  App.css         # Global styles
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## License
+MIT

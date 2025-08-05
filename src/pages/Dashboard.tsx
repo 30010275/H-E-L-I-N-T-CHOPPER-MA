@@ -1,5 +1,6 @@
 // File: src/pages/Dashboard.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaBell, FaPlus, FaFileExport, FaSun, FaMoon } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
@@ -21,6 +22,22 @@ const chartData = [
 const Dashboard: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  // Fleet data state
+  const [fleet, setFleet] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/fleet")
+      .then((res: { data: any[] }) => {
+        setFleet(res.data);
+        setLoading(false);
+      })
+      .catch((_err: unknown) => {
+        setError("Failed to load fleet data");
+        setLoading(false);
+      });
+  }, []);
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
@@ -77,15 +94,6 @@ const Dashboard: React.FC = () => {
         <button><FaFileExport /> Export PDF</button>
       </section>
 
-      <section className="dashboard-gallery">
-        <h2>Fleet Highlights</h2>
-        <div className="gallery-grid">
-          <img src="https://www.pcc.edu/programs/aviation-maintenance/wp-content/uploads/sites/88/2019/07/aviation-maintenance1-1000x563.jpg" alt="Helicopter 1" />
-          <img src="https://img.aviationpros.com/files/base/cygnus/cavc/image/2011/01/mro1_10218716.png?auto=format,compress&fit=fill&fill=blur&q=45&w=640&width=640" alt="Helicopter 2" />
-          <img src="https://helicoptermaintenancemagazine.com/sites/default/files/covers/dom_202506.jpg" alt="Helicopter 3" />
-        </div>
-      </section>
-
       <section className="chart-section">
         <h2>Flight Hours This Month</h2>
         <ResponsiveContainer width="100%" height={300}>
@@ -105,6 +113,35 @@ const Dashboard: React.FC = () => {
             <li key={idx}>{log}</li>
           ))}
         </ul>
+      </section>
+
+      <section className="dashboard-fleet-section">
+        <div className="fleet-header">
+          <h2>Our Helicopter Fleet</h2>
+          <p>Explore our world-class fleet designed for performance, safety, and comfort.</p>
+        </div>
+        <div className="fleet-grid">
+          {loading ? (
+            <div style={{ textAlign: 'center', margin: '32px 0' }}>
+              <div className="spinner" style={{ display: 'inline-block', width: 40, height: 40, border: '4px solid #ccc', borderTop: '4px solid #646cff', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              <div style={{ marginTop: 12 }}>Loading fleet...</div>
+            </div>
+          ) : error ? (
+            <div style={{ color: 'red' }}>{error}</div>
+          ) : fleet.length === 0 ? (
+            <div>No helicopters found.</div>
+          ) : (
+            fleet.map((heli) => (
+              <div className="fleet-card" key={heli._id}>
+                <img src={heli.imageUrl || "https://via.placeholder.com/400x220?text=No+Image"} alt={heli.name} />
+                <div className="fleet-overlay">
+                  {heli.name} - {heli.type}<br />
+                  Capacity: {heli.capacity} | Status: {heli.status}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </section>
 
       <footer className="dashboard-footer">

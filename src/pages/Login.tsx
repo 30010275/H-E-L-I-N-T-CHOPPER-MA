@@ -1,14 +1,37 @@
 import React, { useState } from "react";
-import "./Login.css"; // Create this for styling
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
+
+export function getAuthToken() {
+  return localStorage.getItem("token") || "";
+}
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Add real authentication logic
-    alert("Login attempted (demo only)");
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", { username, password });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+      setSuccess("Login successful!");
+      window.dispatchEvent(new Event("storage")); // Notify other tabs/components
+      navigate("/dashboard"); // IMMEDIATE redirect after login
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,6 +48,7 @@ const Login: React.FC = () => {
               onChange={(e) => setUsername(e.target.value)}
               required
               autoComplete="username"
+              disabled={loading}
             />
           </div>
 
@@ -37,11 +61,16 @@ const Login: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
+              disabled={loading}
             />
           </div>
 
-          <button type="submit" className="login-button">Login</button>
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
+        {error && <div style={{ color: "red", marginTop: 12 }}>{error}</div>}
+        {success && <div style={{ color: "green", marginTop: 12 }}>{success}</div>}
       </div>
     </div>
   );

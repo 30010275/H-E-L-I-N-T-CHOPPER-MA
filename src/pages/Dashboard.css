@@ -1,76 +1,95 @@
+/* Dashboard Base */
 .dashboard-container {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #1a1a1a;
-  padding: 30px;
-  background: #f9fafa;
+  padding: 40px 30px;
+  background: linear-gradient(to right, #f6f9fc, #eaf3f8);
+  min-height: 100vh;
 }
 
+/* Hero Section */
 .dashboard-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #e6f0f8;
-  padding: 30px;
-  border-radius: 12px;
-  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 40px;
+  border-radius: 20px;
+  margin-bottom: 50px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .hero-text h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 2.8rem;
+  margin-bottom: 12px;
+  font-weight: 700;
+  color: #133b5c;
 }
 
 .hero-text p {
   font-size: 1.2rem;
-  color: #444;
+  color: #3d3d3d;
 }
 
 .hero-image {
-  max-width: 360px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
 }
 
+/* Stats Section */
 .dashboard-stats {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 25px;
   margin-bottom: 60px;
 }
 
 .stat-card {
   flex: 1;
+  min-width: 220px;
   background: #ffffff;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
 }
 
 .stat-card h3 {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-  color: #2b4a66;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: #4b6cb7;
 }
 
 .stat-card p {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 2.2rem;
+  font-weight: 800;
   color: #1a73e8;
 }
 
+/* Fleet Highlights Gallery */
 .dashboard-gallery {
   margin-bottom: 60px;
 }
 
 .dashboard-gallery h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: #1a1a1a;
+  font-size: 2rem;
+  margin-bottom: 25px;
+  color: #133b5c;
   text-align: center;
+  font-weight: 600;
 }
 
-.gallery-grid-modern {
+.gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
@@ -79,14 +98,16 @@
 .gallery-card {
   position: relative;
   overflow: hidden;
-  border-radius: 14px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
 
 .gallery-card:hover {
   transform: scale(1.02);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
 }
 
 .gallery-card img {
@@ -98,7 +119,7 @@
 }
 
 .gallery-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .overlay {
@@ -106,20 +127,126 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
-  color: white;
-  padding: 15px;
-  font-size: 1.1rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
+  color: #fff;
+  padding: 16px;
+  font-size: 1.05rem;
   font-weight: 500;
-  text-align: left;
-  opacity: 0.95;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
+/* --- Fleet Section as Landing Page --- */
+.dashboard-fleet-section {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  padding: 60px 30px;
+  background: linear-gradient(to right, #eaf3f8, #f6f9fc);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.fleet-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.fleet-header h2 {
+  font-size: 2.5rem;
+  color: #133b5c;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.fleet-header p {
+  font-size: 1.15rem;
+  color: #444;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.fleet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 0 10px;
+}
+
+.fleet-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.fleet-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.fleet-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.fleet-card:hover img {
+  transform: scale(1.05);
+}
+
+.fleet-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+/* Footer */
 .dashboard-footer {
   text-align: center;
-  color: #777;
+  color: #666;
   font-size: 0.95rem;
-  margin-top: 30px;
+  margin-top: 40px;
+}
+
+/* Spinner Animation for Loading Indicator */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.spinner {
+  border: 4px solid #ccc;
+  border-top: 4px solid #646cff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  .dashboard-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-image {
+    max-width: 100%;
+    margin-top: 20px;
+  }
 }
