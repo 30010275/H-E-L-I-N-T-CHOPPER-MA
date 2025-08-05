@@ -11,8 +11,8 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string |null>(null);
+  const [success, setSuccess] = useState<string |null>(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,8 +25,8 @@ const Login: React.FC = () => {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       setSuccess("Login successful!");
-      window.dispatchEvent(new Event("storage")); // Notify other tabs/components
-      navigate("/dashboard"); // IMMEDIATE redirect after login
+      window.dispatchEvent(new Event("storage"));
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.error || "Login failed");
     } finally {
@@ -37,6 +37,11 @@ const Login: React.FC = () => {
   return (
     <div className="login-container">
       <div className="login-card">
+        {/* Logo image added here */}
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXKH2kH25mLX7JfGERGju0oSarYbKGcFGAKkbwoQkujG6V_KJmrfk-7vyO4YjMFINXRdE&usqp=CAU"
+          alt="Logo"
+        />
         <h2>Admin Login</h2>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -69,6 +74,7 @@ const Login: React.FC = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
         {error && <div style={{ color: "red", marginTop: 12 }}>{error}</div>}
         {success && <div style={{ color: "green", marginTop: 12 }}>{success}</div>}
       </div>

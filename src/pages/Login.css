@@ -4,7 +4,7 @@
   justify-content: center;
   height: 100%;
   padding: 2rem;
-  background-color: #f5f7fa;
+  background-color: #566070;
 }
 
 .login-card {
@@ -14,6 +14,14 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
   width: 100%;
   max-width: 400px;
+}
+
+/* 🔥 Logo image styling */
+.login-card img {
+  display: block;
+  margin: 0 auto 1.5rem auto;
+  width: 100px;
+  height: auto;
 }
 
 .login-card h2 {

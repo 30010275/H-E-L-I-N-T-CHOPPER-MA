@@ -6,19 +6,6 @@ import { FiSearch } from "react-icons/fi";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import "./Dashboard.css";
 
-const activityLogs = [
-  "Technician Joseph updated Engine Log - Heli #4 - 5 mins ago",
-  "Flight hours exceeded for Heli-X9 - 1 hour ago",
-  "Heli-B12 marked for maintenance - 2 days ago"
-];
-
-const chartData = [
-  { name: "Heli-X1", hours: 180 },
-  { name: "Heli-X2", hours: 150 },
-  { name: "Heli-X3", hours: 200 },
-  { name: "Heli-X4", hours: 90 }
-];
-
 const Dashboard: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -26,26 +13,101 @@ const Dashboard: React.FC = () => {
   const [fleet, setFleet] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chartData, setChartData] = useState<{ name: string; hours: number }[]>([]);
+  const [activityLogs, setActivityLogs] = useState<string[]>([]);
+  const [alerts, setAlerts] = useState<string[]>([]);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
 
   useEffect(() => {
     axios.get("http://localhost:5000/api/fleet")
       .then((res: { data: any[] }) => {
         setFleet(res.data);
         setLoading(false);
+        // Build chart data from backend fleet data
+        const chart = res.data.map((heli: any) => ({
+          name: heli.name || heli.registration || "Unknown",
+          hours: heli.hours || 0
+        }));
+        setChartData(chart);
       })
       .catch((_err: unknown) => {
         setError("Failed to load fleet data");
         setLoading(false);
       });
+
+    // Fetch activity logs from backend
+    axios.get("http://localhost:5000/api/maintenance/activity")
+      .then((res: { data: string[] }) => {
+        setActivityLogs(res.data);
+      })
+      .catch(() => {
+        setActivityLogs(["No recent activity."]);
+      });
+
+    // Fetch alerts/notifications from backend
+    axios.get("http://localhost:5000/api/maintenance/alerts")
+      .then((res: { data: string[] }) => {
+        setAlerts(res.data);
+        if (res.data.length > 0) {
+          setToastMsg(res.data[0]);
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 4000);
+        }
+      })
+      .catch(() => {
+        setAlerts(["No alerts."]);
+      });
   }, []);
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
+  const handleAddMaintenance = () => {
+    window.location.href = "/add-maintenance";
+  };
+
+  const handleExportCSV = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/fleet/export/csv", { responseType: "blob" });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "fleet.csv");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch {
+      setToastMsg("Failed to export CSV.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 4000);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/fleet/export/pdf", { responseType: "blob" });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "fleet.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch {
+      setToastMsg("Failed to export PDF.");
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 4000);
+    }
+  };
+
   return (
     <div className={`dashboard-container ${darkMode ? "dark-mode" : ""}`}>
+      {showToast && (
+        <div className="toast success">{toastMsg}</div>
+      )}
       <header className="dashboard-hero">
         <div className="hero-text">
-          <h1>HELINT Aircraft Dashboard</h1>
+          <h1>Helint Aircraft Dashboard</h1>
           <p>Monitor and manage your helicopter fleet with precision and ease.</p>
         </div>
         <img
@@ -62,36 +124,37 @@ const Dashboard: React.FC = () => {
           <div className="notifications-panel">
             <h4>Alerts</h4>
             <ul>
-              <li>Maintenance due for Heli-X9 in 2 days</li>
-              <li>Flight hours exceeded threshold</li>
+              {alerts.map((alert, idx) => (
+                <li key={idx}>{alert}</li>
+              ))}
             </ul>
           </div>
         )}
       </header>
 
       <section className="dashboard-stats">
-        <div className="stat-card">
+        <div className="stat-card total">
           <h3>Total Aircraft</h3>
-          <p>7</p>
+          <p>{fleet.length}</p>
         </div>
-        <div className="stat-card yellow">
+        <div className="stat-card maintenance">
           <h3>Scheduled Maintenance</h3>
-          <p>3</p>
+          <p>{fleet.filter(heli => heli.status && heli.status.toLowerCase().includes("maintenance")).length}</p>
         </div>
-        <div className="stat-card green">
+        <div className="stat-card active">
           <h3>Active Aircraft</h3>
-          <p>4</p>
+          <p>{fleet.filter(heli => heli.status && heli.status.toLowerCase() === "active").length}</p>
         </div>
-        <div className="stat-card red">
+        <div className="stat-card grounded">
           <h3>Grounded</h3>
-          <p>1</p>
+          <p>{fleet.filter(heli => heli.status && heli.status.toLowerCase() === "grounded").length}</p>
         </div>
       </section>
 
       <section className="quick-actions">
-        <button><FaPlus /> Add Maintenance Log</button>
-        <button><FaFileExport /> Export CSV</button>
-        <button><FaFileExport /> Export PDF</button>
+        <button onClick={handleAddMaintenance}><FaPlus /> Add Maintenance Log</button>
+        <button onClick={handleExportCSV}><FaFileExport /> Export CSV</button>
+        <button onClick={handleExportPDF}><FaFileExport /> Export PDF</button>
       </section>
 
       <section className="chart-section">
@@ -120,6 +183,11 @@ const Dashboard: React.FC = () => {
           <h2>Our Helicopter Fleet</h2>
           <p>Explore our world-class fleet designed for performance, safety, and comfort.</p>
         </div>
+        <div className="fleet-gallery" style={{ display: 'flex', gap: '24px', marginBottom: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <img src="https://heliflite.com/wp-content/uploads/2021/07/the-fleet-cover.jpg" alt="Helicopter 1" style={{ width: 220, height: 140, objectFit: 'cover', borderRadius: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }} />
+          <img src="https://www.slashgear.com/img/gallery/12-of-the-most-iconic-military-helicopters-in-history/intro-1742960640.jpg" alt="Helicopter 2" style={{ width: 220, height: 140, objectFit: 'cover', borderRadius: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }} />
+          <img src="https://www.rotorhub.com/wp-content/uploads/2024/02/MD-Helicopteres-Helint.png" alt="Helicopter 3" style={{ width: 220, height: 140, objectFit: 'cover', borderRadius: 12, boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }} />
+        </div>
         <div className="fleet-grid">
           {loading ? (
             <div style={{ textAlign: 'center', margin: '32px 0' }}>
@@ -129,7 +197,7 @@ const Dashboard: React.FC = () => {
           ) : error ? (
             <div style={{ color: 'red' }}>{error}</div>
           ) : fleet.length === 0 ? (
-            <div>No helicopters found.</div>
+            <div>manage your helicopter fleet with precision.</div>
           ) : (
             fleet.map((heli) => (
               <div className="fleet-card" key={heli._id}>

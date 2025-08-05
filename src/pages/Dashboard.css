@@ -51,7 +51,7 @@
 .stat-card {
   flex: 1;
   min-width: 220px;
-  background: #ffffff;
+  background: #cecaca;
   padding: 30px;
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
@@ -59,9 +59,25 @@
   transition: all 0.3s ease;
 }
 
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+.stat-card.grounded {
+  background: #f56565;
+  color: #fff;
+}
+
+.stat-card.active {
+  background: #48bb78;
+  color: #fff;
+}
+
+.stat-card.maintenance {
+  background: #4299e1;
+  color: #fff;
+}
+
+.stat-card.total {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #e2e8f0;
 }
 
 .stat-card h3 {
@@ -70,10 +86,32 @@
   color: #4b6cb7;
 }
 
+.stat-card.grounded h3,
+.stat-card.active h3,
+.stat-card.maintenance h3 {
+  color: #fff;
+}
+
 .stat-card p {
   font-size: 2.2rem;
   font-weight: 800;
   color: #1a73e8;
+}
+
+.stat-card.grounded p {
+  color: #fff;
+}
+
+.stat-card.active p {
+  color: #fff;
+}
+
+.stat-card.maintenance p {
+  color: #fff;
+}
+
+.stat-card.total p {
+  color: #133b5c;
 }
 
 /* Fleet Highlights Gallery */
@@ -236,6 +274,30 @@
   height: 40px;
   animation: spin 1s linear infinite;
   display: inline-block;
+}
+
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  background-color: #48bb78;
+  color: white;
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  animation: fadeOut 4s forwards;
+  z-index: 9999;
+}
+
+.toast.error {
+  background-color: #f56565;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20px); }
 }
 
 /* Responsive Enhancements */
