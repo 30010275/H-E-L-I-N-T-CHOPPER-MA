@@ -17,6 +17,14 @@ app.use('/api/fleet', fleetRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/auth', authRoutes);
 
+app.get('/', (req, res) => {
+  res.send('API is working');
+});
+
+app.get('/healthz', (req, res) => {
+  res.send('OK');
+});
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
